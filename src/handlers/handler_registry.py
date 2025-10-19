@@ -20,7 +20,7 @@ class HandlerRegistry:
         """Register a new event handler"""
         event_type = handler.get_event_type()
         self._handlers[event_type] = handler
-        logger.debug(f"Registered handler for event type: {event_type}")
+        logger.debug(f"Handler enregistré pour le type: {event_type}")
     
     def get_handler(self, event_type: str) -> EventHandler:
         """Get handler for a specific event type"""

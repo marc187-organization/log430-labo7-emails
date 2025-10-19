@@ -22,22 +22,11 @@ class UserDeletedHandler(EventHandler):
         return "UserDeleted"
     
     def handle(self, event_data: Dict[str, Any]) -> None:
-        user_id = event_data.get('id')
-        name = event_data.get('name')
-        email = event_data.get('email')
-        datetime = event_data.get('datetime')
-        
-        current_file = Path(__file__)
-        project_root = current_file.parent.parent   
-        with open(project_root / "templates" / "goodbye_client_template.html", 'r') as file:
-            html_content = file.read()
-            html_content = html_content.replace("{{user_id}}", str(user_id))
-            html_content = html_content.replace("{{name}}", name)
-            html_content = html_content.replace("{{email}}", email)
-            html_content = html_content.replace("{{deletion_date}}", datetime)
-        
-        filename = os.path.join(self.output_dir, f"goodbye_{user_id}.html")
-        with open(filename, 'w', encoding='utf-8') as f:
-            f.write(html_content)
-        
-        self.logger.debug(f"Created goodbye message for user {name} (ID: {user_id}) at {filename}")
+        # TODO: implémentation basée sur UserCreated
+        user_id = 0
+        name = "None"
+        email = "None"
+        datetime = "0"
+        filename = "None"
+
+        self.logger.debug(f"Courriel HTML généré à {name} (ID: {user_id}) at {filename}")

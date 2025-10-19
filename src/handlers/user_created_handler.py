@@ -40,4 +40,4 @@ class UserCreatedHandler(EventHandler):
         with open(filename, 'w', encoding='utf-8') as f:
             f.write(html_content)
         
-        self.logger.debug(f"Created welcome message for user {name} (ID: {user_id}) at {filename}")
+        self.logger.debug(f"Courriel HTML généré à {name} (ID: {user_id}), {filename}")
