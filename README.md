@@ -4,7 +4,7 @@
 ÉTS - LOG430 - Architecture logicielle - Chargé de laboratoire: Gabriel C. Ullmann, Automne 2025.
 
 ## 🎯 Objectifs d'apprentissage
-- Comprendre les concepts de producteurs et consommateurs d'événements avec Apache Kafka et Zookeeper
+- Comprendre les concepts de producteurs et consommateurs d'événements avec [Apache Kafka](https://kafka-python.readthedocs.io/en/master/apidoc/modules.html) et [Apache Zookeeper](https://zookeeper.apache.org/)
 - Appliquer l'event sourcing pour maintenir et consulter l'historique des événements
 
 ## ⚙️ Setup
@@ -57,34 +57,34 @@ Dans `coolriel`, complétez l'implémentation de `src/handlers/user_deleted_hand
 ### 3. Ajoutez des types d'utilisateur
 Dans le `store_manager`, modifiez `db-init/init.sql` pour ajouter champ `user_type_id` à la table `User`. Créez une table `UserType` pour faire la distinction entre trois types d'utilisateurs : clients, employés et directeurs du magasin. Relecionez `UserType` et `User` en utilisant `FOREIGN KEY`.
 ```sql
--- Users types table
-DROP TABLE IF EXISTS user_types;
-CREATE TABLE user_types (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(15) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-INSERT INTO user_types (name) VALUES
-('Client'), -- 1
-('Employee'), -- 2
-('Manager'); -- 3
+    -- User types table
+    DROP TABLE IF EXISTS user_types;
+    CREATE TABLE user_types (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(15) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    INSERT INTO user_types (name) VALUES
+    ('Client'), -- 1
+    ('Employee'), -- 2
+    ('Manager'); -- 3
 
--- Users table
-DROP TABLE IF EXISTS users;
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL UNIQUE,
-    user_type_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    FOREIGN KEY (user_type_id) REFERENCES user_types(id) ON DELETE RESTRICT
-);
-INSERT INTO users (name, email, user_type_id) VALUES
-('Ada Lovelace', 'alovelace@example.com', 1),
-('Adele Goldberg', 'agoldberg@example.com', 1),
-('Alan Turing', 'aturing@example.com', 1),
-('Jane Doe', 'jdoe@magasinducoin.ca', 2),
-('Da Boss', 'dboss@magasinducoin.ca', 3);
+    -- Users table
+    DROP TABLE IF EXISTS users;
+    CREATE TABLE users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        email VARCHAR(150) NOT NULL UNIQUE,
+        user_type_id INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        FOREIGN KEY (user_type_id) REFERENCES user_types(id) ON DELETE RESTRICT
+    );
+    INSERT INTO users (name, email, user_type_id) VALUES
+    ('Ada Lovelace', 'alovelace@example.com', 1),
+    ('Adele Goldberg', 'agoldberg@example.com', 1),
+    ('Alan Turing', 'aturing@example.com', 1),
+    ('Jane Doe', 'jdoe@magasinducoin.ca', 2),
+    ('Da Boss', 'dboss@magasinducoin.ca', 3);
 ```
 
 Exécutez `docker compose down -v`, `build` et `up -d` pour recréer la structure de la base de données. Adaptez `src/orders/commands/write_user.py` pour accepter et enregistrer des `user_type_id`. Utilisez la collection Postman du labo 5 toujours pour vous aider à tester l'ajout et suppression des utilisateurs.
@@ -121,5 +121,5 @@ Utilisez votre nouveau `user_history_consumer` dans `coolriel.py` pour tester. S
 
 ## 📦 Livrables
 
-- **Code source** : Archive .zip contenant l'intégralité du code du Labo 07
-- **Rapport** : Réponses aux questions avec captures d'écran et extraits de code
+- Un fichier .zip contenant l'intégralité du code source du projet Labo 07.
+- Un rapport en .pdf répondant aux questions présentées dans ce document. Il est obligatoire d'illustrer vos réponses avec du code ou des captures d'écran/terminal.
