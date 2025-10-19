@@ -16,9 +16,9 @@ def main():
     """Main entry point for the consumer service"""
     
     # Configuration
-    KAFKA_BOOTSTRAP_SERVERS = 'localhost:9092'
+    KAFKA_BOOTSTRAP_SERVERS = 'kafka:9092'
     KAFKA_TOPIC = 'user-events'
-    KAFKA_GROUP_ID = 'user-event-consumer-group'
+    KAFKA_GROUP_ID = 'coolriel-group'
     OUTPUT_DIR = 'output'
     
     # Create handler registry
