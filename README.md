@@ -39,7 +39,9 @@ docker compose up -d
 ```
 
 ### 4. Apache Zookeeper
-Apache Zookeeper est une application de coordination d'applications distribuées en clusters qui fonctionne en tandem avec Kafka. Elle est indiqué dans notre `docker-compose.yml`. Bien que cela dépasse le cadre de notre laboratoire, je vous recommande de lire [cet article](https://www.openlogic.com/blog/using-kafka-zookeeper#how-kafka-and-zookeeper-are-used-01) pour en savoir plus.
+Apache ZooKeeper est un service de coordination pour les applications distribuées qui travaille en tandem avec Kafka. Il est configuré dans notre `docker-compose.yml` la gestion des métadonnées du cluster de brokers Kafka. Bien que nous utilisions un seul broker Kafka dans ce laboratoire, ZooKeeper reste nécessaire pour le bon fonctionnement de Kafka. Sa présence illustre également l'architecture standard de Kafka : en production, Kafka est généralement déployé en cluster multi-broker pour assurer la haute disponibilité et la tolérance aux pannes. 
+
+Bien que ZooKeeper dépasse le cadre de notre laboratoire, je vous recommande de lire [cet article](https://www.openlogic.com/blog/using-kafka-zookeeper#how-kafka-and-zookeeper-are-used-01) pour en savoir plus.
 
 ## 🧪 Activités pratiques
 
