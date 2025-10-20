@@ -1,0 +1,32 @@
+@startuml
+package View {
+    [UserView] 
+}
+
+package Controller {
+    [UserController] 
+}
+
+package Producer {
+    [WriteUser] 
+}
+
+package Model {
+    [User] 
+}
+
+package Consumer {
+    [UserCreatedHandler] 
+    [UserDeletedHandler] 
+}
+
+[UserView] --> [UserController] : Démander la création/suppression
+[UserController] --> [WriteUser] : Démander la création/suppression
+[WriteUser] --> [UserController] : Notifier le Controller
+[UserController] --> [UserView] : Mettre à jour la View 
+[WriteUser] --> [User] : Créer/supprimer un utilisateur 
+[User] --> [WriteUser] : Notifier le write model
+[WriteUser] --> [UserCreatedHandler] : Envoyer un courriel de notification
+[WriteUser] --> [UserDeletedHandler] : Envoyer un courriel de notification
+
+@enduml

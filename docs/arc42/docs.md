@@ -73,7 +73,8 @@ L'application Coolriel permet :
 
 ## 8. Concepts transversaux
 - Event-Driven Architecture
-- Pub/Sub
+- Producer/Consumer
+- Publisher/Subscriber
 - Event Sourcing
 
 ## 9. Décisions d'architecture
@@ -88,14 +89,13 @@ Veuillez consulter le fichier `/docs/adr/adr001.md`.
 
 ### Résilience
 - Coolriel peut fonctionner même sans Store Manager
-- Kafka garantit la livraison des messages (at-least-once)
+- Kafka garantit la livraison des messages au moins une fois
 - Consommateurs peuvent redémarrer sans perte de messages
 - Kafka réessaye automatiquement en cas d'échec temporaire
 
 ### Performance
 - Traitement asynchrone non-bloquant
-- Parallélisation possible via partitions Kafka
-- Batch processing des messages
+- Parallélisation et batch processing possible (pas dans le cadre de ce labo)
 
 ### Traçabilité
 - Tous les événements conservés pendant 7 jours (la durée est configurable)
