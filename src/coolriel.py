@@ -20,7 +20,7 @@ def main():
     
     # le consommateur peut écouter 1 ou plusieurs topics (str or array)
     consumer_service = UserEventConsumer(
-        bootstrap_servers=config.KAFKA_BOOTSTRAP_SERVERS,
+        bootstrap_servers=config.KAFKA_HOST,
         topic=config.KAFKA_TOPIC,
         group_id=config.KAFKA_GROUP_ID,
         registry=registry
