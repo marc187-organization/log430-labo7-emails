@@ -56,7 +56,7 @@ docker compose up -d
 
 Examinez les fichiers `src/orders/commands/write_user.py` (`store_manager`) et `src/handlers/user_created_handler.py` (`coolriel`) et réfléchissez sur le flux d'événements. Utilisez la collection Postman du labo 5 pour ajouter quelques utilisateurs et observez les messages dans le terminal des deux applications (par exemple, via Docker Desktop).
 
-> ⚠️ ATTENTION: N'oubliez pas qu'il n'est pas possible d'ajouter deux utilisateurs à notre base de données avec la même adresse e-mail. Pour plus de détails, veuillez consulter `db-init/init.sql` dans l'application Store Manager.
+> ⚠️ ATTENTION: N'oubliez pas qu'il n'est pas possible d'ajouter deux utilisateurs à notre base de données avec la même adresse courriel. Pour plus de détails, veuillez consulter `db-init/init.sql` dans l'application Store Manager.
 
 > 💡 **Question 1** : Quelle est la différence entre la communication entre `store_manager` et `coolriel` dans ce labo, et la communication entre `store_manager` et `payments_api` que nous avons implémentée pendant le labo 5 ? Expliquez avec des extraits de code ou des diagrammes et discutez des avantages et des inconvénients.
 
