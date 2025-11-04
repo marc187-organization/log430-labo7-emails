@@ -92,6 +92,27 @@ UNIVERSITÉ DU QUÉBEC
 
 > Quelle est la différence entre la communication entre store_manager et coolriel dans ce labo et la communication entre store_manager et payments_api que nous avons implémentée pendant le labo 5 ? Expliquez avec des extraits de code ou des diagrammes et discutez des avantages et des inconvénients.
 
+Dans le Lab 5, la création d’une commande repose sur des appels synchrones REST. Quand on exécute add_order, tout s’enchaîne dans le même flot : insertion en MySQL, mise à jour du stock et appel direct du service de paiements via l’API-Gateway. Par exemple :
+
+```Python
+response = requests.post('http://api-gateway:8080/payments-api/payments', json={"user_id": user_id, "order_id": order_id, "total_amount": total_amount})
+```
+Si ce service est lent ou indisponible, l’ordre échoue et toute la transaction est annulée. C’est donc simple et cohérent immédiatement, mais fortement couplé et peu résilient.
+
+Dans le Lab 7, on adopte une approche asynchrone Event Driven avec Kafka. Lorsqu’un utilisateur est créé, il est d’abord inséré en base, puis un événement est publié :
+
+```Py
+UserEventProducer().send('user-events', value={'event':'UserCreated','id':new_user.id})
+```
+Les autres services, comme le service de notification, écoutent ce topic et réagissent via leurs handlers :
+
+```Python
+registry.register(UserCreatedHandler(...))
+consumer_service.start()
+```
+De cette façon, le service `store_manager` reste découplé : il n’attend pas la fin du traitement des autres services (dans ce cas-ci, le service de notification `Coolriel`). C’est plus robuste et extensible, mais la cohérence devient éventuelle et la gestion de Kafka ajoute de la complexité au code.
+
+
 
 ### **Question 2**
 
