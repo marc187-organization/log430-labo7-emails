@@ -26,6 +26,16 @@ def main():
         group_id=config.KAFKA_GROUP_ID,
         registry=registry,
     )
+
+    consumer_service_history = UserEventHistoryConsumer(
+        bootstrap_servers=config.KAFKA_HOST,
+        topic=config.KAFKA_TOPIC,
+        group_id=f"{config.KAFKA_GROUP_ID}-history",
+        registry=registry,
+    )
+
+    consumer_service_history.start()
+
     consumer_service.start()
 
 if __name__ == "__main__":

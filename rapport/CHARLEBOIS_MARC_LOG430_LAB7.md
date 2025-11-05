@@ -118,14 +118,92 @@ De cette façon, le service `store_manager` reste découplé : il n’attend pas
 
 > Quelles méthodes avez-vous modifiées dans src/orders/commands/write_user.py? Illustrez avec des captures d'écran ou des extraits de code.
 
+J’ai modifié la méthode `add_user` afin d’y ajouter le paramètre `user_type_id`, ce qui permet d’associer chaque utilisateur à un type spécifique (par exemple client, employé ou administrateur). La méthode insère toujours l’utilisateur dans la base MySQL, mais publie maintenant sur Kafka un événement `UserCreated` enrichi avec ce champ supplémentaire, de même manière que pour l'évenement `UserDeleted`  :
+
+```Py
+def add_user(name: str, email: str, user_type_id: int):
+    """Insert user with items in MySQL"""
+    if not name or not email or not user_type_id:
+        raise ValueError("Cannot create user. A user must have name, email and a user_type_id.")
+
+    session = get_sqlalchemy_session()
+
+    try:
+        new_user = User(name=name, email=email, user_type_id=user_type_id)
+        session.add(new_user)
+        session.flush()
+        session.commit()
+
+        user_event_producer = UserEventProducer()
+        user_event_producer.get_instance().send('user-events', value={'event': 'UserCreated',
+                                           'id': new_user.id,
+                                           'name': new_user.name,
+                                           'email': new_user.email,
+                                           'user_type_id': new_user.user_type_id,
+                                           'datetime': str(datetime.datetime.now())})
+        return new_user.id
+    except Exception as e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+```
+
 
 ### **Question 3**
 
 > Comment avez-vous implémenté la vérification du type d'utilisateur ? Illustrez avec des captures d'écran ou des extraits de code.
 
+J’ai implémenté la vérification du type d’utilisateur directement dans la méthode `handle()` du `UserCreatedHandler` et du `UserDeletedHandler`. Après avoir récupéré la valeur de `user_type_id` depuis les données de l’événement, j’ai ajouté une condition  pour définir une variable `message` que j'ai ajouté au template HTML. Cette variable est donc différente selon le type d’utilisateur. Par exemple :
+
+```Py
+user_type_id = event_data.get('user_type_id')
+# Autres variables prises de l'évenement...
+
+message = "Salut et bienvenue dans l'équipe!" # Employee or Manager
+if user_type_id == 1: # Client
+    message = "Merci d'avoir visité notre magazin. Si vous avez des questions ou des problèmes concernant votre achat, n'hésitez pas à nous contacter."
+
+
+current_file = Path(__file__)
+project_root = current_file.parent.parent
+with open(project_root / "templates" / "welcome_client_template.html", 'r') as file:
+    html_content = file.read()
+    # Autres variables remplacées dans le templates...
+    html_content = html_content.replace("{{message}}", message)
+
+```
+
+De même pour `UserDeletedHandler`:
+```Py
+user_type_id = event_data.get('user_type_id')
+# Autres variables prises de l'évenement...
+
+message = ""
+if user_type_id == 1: # Client
+    message = "Merci d'avoir été Client de notre magasin."
+if user_type_id == 1: # Employee
+    message = "Merci d'avoir été Employee de notre magasin."
+if user_type_id == 1: # Manager
+    message = "Merci d'avoir été Manager de notre magasin."
+
+
+current_file = Path(__file__)
+project_root = current_file.parent.parent
+with open(project_root / "templates" / "goodbye_client_template.html", 'r') as file:
+    html_content = file.read()
+    # Autres variables remplacées dans le templates...
+    html_content = html_content.replace("{{message}}", message)
+```
+
+
+
 ### **Question 4**
 
 > Comment Kafka utilise-t-il son système de partitionnement pour atteindre des performances de lecture élevées ? Lisez cette section de la documentation officielle à Kafka et résumez les points principaux.
+
+Le système de partitionnement de Apache Kafka permet d’atteindre de hautes performances de lecture en divisant chaque sujet (topic) en plusieurs partitions indépendantes, chacune étant un journal ordonné append-only. Ainsi, plusieurs consommateurs d’un même groupe peuvent lire en parallèle chaque partition différente, ce qui augmente le débit global de lecture. De plus, chaque partition peut être placée sur un noeud (broker) différent, permettant la distribution de la charge (lecture/écriture) entre plusieurs serveurs, et la réplication de partitions garantit la disponibilité et la tolérance aux pannes. Enfin, Kafka assure l’ordre des messages à l’intérieur d’une partition (mais pas entre partitions), ce qui permet de maintenir les garanties d’ordre tout en exploitant la parallélisation.
+
 
 ### **Question 5**
 

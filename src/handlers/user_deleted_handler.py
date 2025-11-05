@@ -28,7 +28,17 @@ class UserDeletedHandler(EventHandler):
         user_id = event_data.get('id')
         name = event_data.get('name')
         email = event_data.get('email')
+        user_type_id = event_data.get('user_type_id')
         datetime = event_data.get('datetime')
+
+        message = ""
+        if user_type_id == 1: # Client
+            message = "Merci d'avoir été Client de notre magasin."
+        if user_type_id == 1: # Employee
+            message = "Merci d'avoir été Employee de notre magasin."
+        if user_type_id == 1: # Manager
+            message = "Merci d'avoir été Manager de notre magasin."
+
 
         current_file = Path(__file__)
         project_root = current_file.parent.parent
@@ -37,6 +47,7 @@ class UserDeletedHandler(EventHandler):
             html_content = html_content.replace("{{user_id}}", str(user_id))
             html_content = html_content.replace("{{name}}", name)
             html_content = html_content.replace("{{email}}", email)
+            html_content = html_content.replace("{{message}}", message)
             html_content = html_content.replace("{{deletion_date}}", datetime)
 
         filename = os.path.join(self.output_dir, f"goodbye_{user_id}.html")
